@@ -349,7 +349,7 @@ def f_3(message):
         time.sleep(1)
 
     else:
-        bot.send_message(message.chat.id, "Ну тогда до завтра", reply_markup=telebot.types.ReplyKeyboardRemove())
+        bot.send_message(message.chat.id, "Алексей: Ну тогда до завтра", reply_markup=telebot.types.ReplyKeyboardRemove())
         time.sleep(2)
         bot.send_message(message.chat.id, "Это хорошо повлияет на ваш сон!")
         time.sleep(1)
