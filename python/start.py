@@ -76,13 +76,15 @@ def get_group(message):
         bot.send_message(message.chat.id,
                          'Первая группа. А других вариантов и быть не могло!',
                          reply_markup=telebot.types.ReplyKeyboardRemove())
-        f1(message)
+        f_1(message)
     elif message.text in list(map(str, [i for i in range(2, 6 + 1)])):
         bot.send_message(message.chat.id, 'Фатальная ошибка. Вы проиграли',
                          reply_markup=telebot.types.ReplyKeyboardRemove())
 
 
-def f1(message):
+def f_1(message):
+    time.sleep(1)
+    bot.send_message(message.chat.id, "День 1")
     time.sleep(1)
     bot.send_message(message.chat.id, '8:50. 229 кабинет, алгебра')
     time.sleep(1.5)
@@ -94,10 +96,19 @@ def f1(message):
 
     keyboard.add(key_yes, key_probably, key_no)
     bot.send_message(message.chat.id, 'Иван: Ты домашку делал?', reply_markup=keyboard)
-    bot.register_next_step_handler(message, f2)
+    bot.register_next_step_handler(message, f_2)
 
+def alex(message):
+    keyboard = telebot.types.ReplyKeyboardMarkup()
+    key_yes = telebot.types.KeyboardButton(text="Да, пойду")
+    key_probably = telebot.types.KeyboardButton(text="Нет, я устал, пойду домой")
+    keyboard.add(key_yes, key_probably)
 
-def f2(message):
+    bot.send_message(message.chat.id, "Алексей: Ты пойдешь на литературу?", reply_markup=keyboard)
+
+    bot.register_next_step_handler(message, f_3)
+
+def f_2(message):
     if message.text == "Да, делал":
         bot.send_message(message.chat.id, "Иван: Отлично, просто я не успел. Прикрой меня",
                          reply_markup=telebot.types.ReplyKeyboardRemove())
@@ -150,6 +161,9 @@ def f2(message):
                             time.sleep(1)
                             bot.send_message(message.chat.id, player.intelligence(5))
                             player.rep(10)
+                            bot.send_message(message.chat.id, "Через час")
+                            time.sleep(2)
+                            alex(message)
                         else:
                             bot.send_message(message.chat.id, 'Дмитрий Евгеньевич: Неправильно! Садитесь, 2!')
                             bot.send_message(message.chat.id, player.intelligence(-5))
@@ -181,6 +195,8 @@ def f2(message):
                                     bot.send_message(message.chat.id, "Иван: Друг, называется",
                                                      reply_markup=telebot.types.ReplyKeyboardRemove())
 
+                                alex(message)
+
                             bot.register_next_step_handler(message, f_2_1_1)
 
                     bot.register_next_step_handler(message, f_2_1)
@@ -200,8 +216,10 @@ def f2(message):
                     bot.send_message(message.chat.id, "Иван: Не повезло мне сегодня. Ну ладно, пока",
                                      reply_markup=keyboard)
 
+                    bot.register_next_step_handler(message, alex)
+
                     def f_2_2(message):
-                        pass
+                        bot.register_next_step_handler(message, alex)
 
                     bot.register_next_step_handler(message, f_2_2)
 
@@ -229,12 +247,13 @@ def f2(message):
                         player.rep(-10)
                     time.sleep(2)
                     bot.send_message(message.chat.id, 'Через час')
+                    alex(message)
 
                 bot.register_next_step_handler(message, f_2_3)
 
 
-def f3(message):
-    if message.text == "Возможно частично":
+
+    elif message.text == "Возможно частично":
         bot.send_message(message.chat.id, "Иван: Ха-ха, понял",
                          reply_markup=telebot.types.ReplyKeyboardRemove())
         time.sleep(1)
@@ -246,16 +265,22 @@ def f3(message):
         key_yes = telebot.types.KeyboardButton(text="Да")
         keyboard.add(key_probably, key_yes)
 
-        bot.send_message(message.chat.id, f"Дмитрий Евгеньевич: {player.player_name}, вы сделали номер 09.10?")
+        bot.send_message(message.chat.id,
+                         f"Дмитрий Евгеньевич: {player.player_name}, вы сделали домашку?", reply_markup=keyboard)
 
-        def f_3_1(message):
+        def f_2_4(message):
             if message.text == "Я только часть дз сделал":
                 bot.send_message(message.chat.id,
                                  f"Дмитрий Евгеньевич: Тогда покажите Александре Игоревне то, что сделали")
                 time.sleep(2)
                 bot.send_message(message.chat.id, "15 минут спустя")
+                time.sleep(1)
                 bot.send_message(message.chat.id,
                                  f"Александра Игоревна: В том, что вы сделали, ошибок нет")
+                time.sleep(1)
+                bot.send_message(message.chat.id, "Час спустя")
+                time.sleep(1)
+                alex(message)
             if message.text == "Да":
                 bot.send_message(message.chat.id,
                                  f"Дмитрий Евгеньевич: Тогда покажите Александре Игоревне тетрадь")
@@ -272,8 +297,9 @@ def f3(message):
                 def f_3_1_1(message):
                     if message.text == "Я дома забыл":
                         if player.params[2] > 0:
-                            bot.send_message(message.chat.id, ("У вас хорошо прокачено красноречие!"
-                                                               "Вы убедили Александру Игоревну, что забыли задание дома"))
+                            bot.send_message(message.chat.id, ("У вас хорошо прокачено красноречие! "
+                                                               "Вы убедили Александру Игоревну, что забыли задание дома "))
+                            bot.send_message(message.chat.id, "Александра Игоревна: Ладно, в пятницу принесете ")
                             bot.send_message(message.chat.id, player.eloquence(5))
                         else:
                             bot.send_message(message.chat.id, "Александра Игоревна: Не надо врать!")
@@ -281,26 +307,62 @@ def f3(message):
                     else:
                         bot.send_message(message.chat.id, "Александра Игоревна: Ладно, в пятницу принесете")
 
+                    time.sleep(1)
+                    bot.send_message(message.chat.id, 'Через час')
+                    alex(message)
+
                 bot.register_next_step_handler(message, f_3_1_1)
-                time.sleep(1)
-                bot.send_message(message.chat.id, 'Через час')
+
+        bot.register_next_step_handler(message, f_2_4)
+
+    elif message.text == "Нет, я не успел":
+        time.sleep(1)
+        bot.send_message(message.chat.id, "Александра Игоревна: Я вообще-то все слышу")
+        time.sleep(1)
+        bot.send_message(message.chat.id,
+                         "Александра Игоревна: Не успевают только неуспевающие.. Принесете к следующему уроку")
+        time.sleep(1)
+        bot.send_message(message.chat.id, player.health(-5))
+        time.sleep(1)
+        bot.send_message(message.chat.id, player.eloquence(-5))
+
+        time.sleep(1)
+        bot.send_message(message.chat.id, 'Через час')
+        time.sleep(1)
+        alex(message)
 
 
 
 
-
-
-
-
-
-
-
-
-
-
+def f_3(message):
+    time.sleep(1)
+    if message.text == "Да, пойду":
+        bot.send_message(message.chat.id, "Алексей: Отлично, тогда пошли", reply_markup=telebot.types.ReplyKeyboardRemove())
+        time.sleep(2)
+        bot.send_message(message.chat.id, "Это решение положительно сказалось на вашем красноречии!")
+        time.sleep(1)
+        bot.send_message(message.chat.id, player.eloquence(15))
+        time.sleep(2)
+        bot.send_message(message.chat.id, "Но оно уменьшило продолжительность отдыха")
+        time.sleep(1)
+        bot.send_message(message.chat.id, player.health(-5))
+        time.sleep(1)
 
     else:
-        bot.send_message(message.chat.id, message.text)
+        bot.send_message(message.chat.id, "Ну тогда до завтра", reply_markup=telebot.types.ReplyKeyboardRemove())
+        time.sleep(2)
+        bot.send_message(message.chat.id, "Это хорошо повлияет на ваш сон!")
+        time.sleep(1)
+        bot.send_message(message.chat.id, player.health(10))
+        time.sleep(2)
+        bot.send_message(message.chat.id, "Но ваш навык красноречия будет уменьшен!")
+        time.sleep(1)
+        bot.send_message(message.chat.id, player.eloquence(-5))
+    time.sleep(1)
+    f_4(message)
+
+def f_4(message):
+    bot.send_message(message.chat.id, "Продолжение следует...")
 
 
 if __name__ == '__main__':
